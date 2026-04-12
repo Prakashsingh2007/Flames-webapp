@@ -1,0 +1,70 @@
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+from .models import FlamesResult
+from .serializers import (
+    FlamesCalculateRequestSerializer,
+    FlamesHistorySerializer,
+    FlamesResultSerializer,
+)
+from .services.flames_logic import calculate_flames
+
+
+class FlamesView(APIView):
+    def post(self, request):
+        request_serializer = FlamesCalculateRequestSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        try:
+            result = calculate_flames(
+                request_serializer.validated_data["name1"],
+                request_serializer.validated_data["name2"],
+            )
+        except ValueError as validation_error:
+            return Response(
+                {"error": str(validation_error)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        saved_result = FlamesResult.objects.create(
+            name1=result["name1"],
+            name2=result["name2"],
+            cleaned_name1=result["cleaned_name1"],
+            cleaned_name2=result["cleaned_name2"],
+            remaining_count=result["remaining_count"],
+            relationship=result["relationship"],
+            user=request.user if request.user.is_authenticated else None,
+        )
+        serialized_result = FlamesResultSerializer(saved_result)
+
+        response_payload = {
+            **result,
+            "calculation_id": serialized_result.data["id"],
+            "created_at": serialized_result.data["created_at"],
+            "owned_by_authenticated_user": bool(saved_result.user_id),
+        }
+        return Response(response_payload, status=status.HTTP_200_OK)
+
+
+class FlamesHistoryView(APIView):
+    def get(self, request):
+        limit_value = request.query_params.get("limit", "20")
+
+        try:
+            limit = max(1, min(int(limit_value), 100))
+        except ValueError:
+            return Response(
+                {"error": "limit must be a valid integer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        queryset = FlamesResult.objects.all().order_by("-created_at")[:limit]
+        serializer = FlamesHistorySerializer(queryset, many=True)
+        return Response(
+            {
+                "count": len(serializer.data),
+                "results": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
