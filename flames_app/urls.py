@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import FlamesView, FlamesHistoryView
 from .auth_views import RegisterView, LoginView, LogoutView, MeView, MyResultsView
 
