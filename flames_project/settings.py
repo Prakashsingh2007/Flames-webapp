@@ -134,7 +134,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
+    'https://flames-webapp-tawny.vercel.app/'
 ]
+    
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -156,10 +159,12 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
     "http://127.0.0.1",
     "https://your-app.vercel.app",
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'https://flames-webapp-tawny.vercel.app/'
 
 ]
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 
-CORS_ALLOW_ALL_ORIGINS = True  # temp
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
