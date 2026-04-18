@@ -42,11 +42,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'flames_app',
-    "corsheaders",
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
