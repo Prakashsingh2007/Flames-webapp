@@ -18,6 +18,7 @@ const relationshipThemes = {
 }
 
 function App() {
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const MotionDiv = motion.div
   const MotionLi = motion.li
   const [name1, setName1] = useState('')
