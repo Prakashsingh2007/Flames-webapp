@@ -148,6 +148,9 @@ REST_FRAMEWORK = {
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = [
+    "flames-kx2w.onrender.com",
+]   
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
@@ -159,3 +162,4 @@ CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 
 CORS_ALLOW_ALL_ORIGINS = True  # temp
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
