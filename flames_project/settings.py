@@ -132,6 +132,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
     'https://flames-webapp-tawny.vercel.app'
 ]
     
@@ -149,8 +151,7 @@ REST_FRAMEWORK = {
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 ALLOWED_HOSTS = [
-    "flames-kx2w.onrender.com",
-    ".onrender.com",
+    "*"
 ]
 
 CSRF_TRUSTED_ORIGINS = [

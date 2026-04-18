@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://flames-kx2w.onrender.com/api/$1"
+      "destination": "https://flames-webapp-9li6.vercel.app/api/$1"
     },
     {
       "source": "/(.*)",
