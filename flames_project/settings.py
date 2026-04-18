@@ -152,6 +152,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 ALLOWED_HOSTS = [
     "*"
+    'https://flames-webapp-tawny.vercel.app/'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
