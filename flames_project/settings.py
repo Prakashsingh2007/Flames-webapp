@@ -147,10 +147,10 @@ REST_FRAMEWORK = {
 }
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 ALLOWED_HOSTS = [
     "flames-kx2w.onrender.com",
-]   
+    ".onrender.com",
+]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost",
