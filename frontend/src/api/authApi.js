@@ -1,52 +1,55 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 const parseResponse = async (response) => {
-  let payload = null
+  let payload = null;
 
   try {
-    payload = await response.json()
+    payload = await response.json();
   } catch {
-    throw new Error('Unable to read API response.')
+    throw new Error('Unable to read API response.');
   }
 
   if (!response.ok) {
     const message =
-      payload.detail ||
-      payload.error ||
-      (typeof payload === 'object' ? Object.values(payload).flat().join(' ') : 'Request failed.')
+      payload?.detail ||
+      payload?.error ||
+      (typeof payload === 'object'
+        ? Object.values(payload).flat().join(' ')
+        : 'Request failed.');
 
-    throw new Error(message || 'Request failed.')
+    throw new Error(message || 'Request failed.');
   }
 
-  return payload
-}
+  return payload;
+};
 
+// ✅ REGISTER
 export const registerApi = async ({ username, email, password }) => {
   const response = await fetch(`${API_BASE_URL}/api/auth/register/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, email, password }),
-  })
+  });
 
-  return parseResponse(response)
-}
+  return parseResponse(response);
+};
 
+// ✅ LOGIN
 export const loginApi = async ({ username, password }) => {
   const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
-  })
+  });
 
-  return parseResponse(response)
-}
+  return parseResponse(response);
+};
 
+// ✅ LOGOUT
 export const logoutApi = async () => {
-  const token = localStorage.getItem('flames_auth_token')
+  const token = localStorage.getItem('flames_auth_token');
 
-  if (!token) {
-    return
-  }
+  if (!token) return;
 
   const response = await fetch(`${API_BASE_URL}/api/auth/logout/`, {
     method: 'POST',
@@ -54,7 +57,7 @@ export const logoutApi = async () => {
       'Content-Type': 'application/json',
       Authorization: `Token ${token}`,
     },
-  })
+  });
 
-  await parseResponse(response)
-}
+  return parseResponse(response);
+};
