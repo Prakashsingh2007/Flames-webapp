@@ -132,13 +132,19 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    "https://flames-webapp-tawny.vercel.app",
-    "https://flames-webapp-h2wmw5g92-prakashsingh2007s-projects.vercel.app"
+    "https://flames-webapp-tawny.vercel.app",  # your main domain
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://flames-webapp-tawny.vercel.app",
-    "https://flames-webapp-h2wmw5g92-prakashsingh2007s-projects.vercel.app"
+]
+
+CSRF_TRUSTED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
