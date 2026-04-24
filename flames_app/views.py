@@ -9,7 +9,10 @@ from .serializers import (
     FlamesResultSerializer,
 )
 from .services.flames_logic import calculate_flames
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
+@method_decorator(csrf_exempt, name='dispatch')
 
 class FlamesView(APIView):
     def post(self, request):
