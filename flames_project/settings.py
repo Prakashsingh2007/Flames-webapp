@@ -133,12 +133,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "https://flames-webapp-tawny.vercel.app",
-    "https://flames-webapp-fqst0z4nl-prakashsingh2007s-projects.vercel.app"
+    "https://flames-webapp-nomp869io-prakashsingh2007s-projects.vercel.app"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://flames-webapp-tawny.vercel.app",
-    "https://flames-webapp-fqst0z4nl-prakashsingh2007s-projects.vercel.app"
+    "https://flames-webapp-nomp869io-prakashsingh2007s-projects.vercel.app"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
