@@ -132,13 +132,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'https://flames-webapp-tawny.vercel.app',
-    'https://flames-webapp-prakashsingh2007s-projects.vercel.app'
+    "https://flames-webapp-tawny.vercel.app",
+    "https://flames-webapp-njmfzeros-prakashsingh2007s-projects.vercel.app",
 ]
-    
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://flames-webapp-tawny.vercel.app",
+    "https://flames-webapp-njmfzeros-prakashsingh2007s-projects.vercel.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -151,22 +154,8 @@ REST_FRAMEWORK = {
 }
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://flames-webapp-tawny.vercel.app',
-    'https://flames-webapp-prakashsingh2007s-projects.vercel.app'
-]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://flames-webapp-njmfzeros-prakashsingh2007s-projects.vercel.app"
-]
-
-CORS_ALLOWED_ORIGINS = [
-    "https://flames-webapp-njmfzeros-prakashsingh2007s-projects.vercel.app"
-]
-
-CORS_ALLOW_CREDENTIALS = True
