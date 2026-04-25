@@ -4,7 +4,6 @@ import './App.css'
 import {
   calculateFlamesApi,
   getFlamesHistoryApi,
-  getMyResultsApi,
 } from './api/flamesApi'
 import { loginApi, logoutApi, registerApi } from './api/authApi'
 
@@ -17,8 +16,16 @@ const relationshipThemes = {
   Siblings: { emoji: '🫶', gradient: 'theme-siblings' },
 }
 
+const readStoredUser = () => {
+  try {
+    const stored = localStorage.getItem('flames_auth_user')
+    return stored ? JSON.parse(stored) : null
+  } catch {
+    return null
+  }
+}
+
 function App() {
-  const API_BASE_URL = import.meta.env.VITE_API_URL;
   const MotionDiv = motion.div
   const MotionLi = motion.li
   const [name1, setName1] = useState('')
@@ -41,10 +48,9 @@ function App() {
   const [authPassword, setAuthPassword] = useState('')
   const [authError, setAuthError] = useState('')
   const [authLoading, setAuthLoading] = useState(false)
-  const [currentUser, setCurrentUser] = useState(() => {
-    const stored = localStorage.getItem('flames_auth_user')
-    return stored ? JSON.parse(stored) : null
-  })
+  const [currentUser, setCurrentUser] = useState(readStoredUser)
+
+  const isAuthenticated = Boolean(localStorage.getItem('flames_auth_token') && currentUser)
 
   const relationshipMeta = useMemo(() => {
     if (!result?.relationship) {
@@ -62,7 +68,7 @@ function App() {
 
   // Refresh history whenever the history tab is open.
   useEffect(() => {
-    if (activeTab !== 'history') {
+    if (activeTab !== 'history' || !isAuthenticated) {
       return
     }
 
@@ -71,7 +77,7 @@ function App() {
       setHistoryError('')
 
       try {
-        const payload = currentUser ? await getMyResultsApi() : await getFlamesHistoryApi(20)
+        const payload = await getFlamesHistoryApi(20)
         const rows = Array.isArray(payload) ? payload : payload.results || []
         setHistoryRows(rows)
       } catch (requestError) {
@@ -82,10 +88,24 @@ function App() {
     }
 
     loadHistory()
-  }, [activeTab, currentUser, resultVersion])
+  }, [activeTab, isAuthenticated, resultVersion])
+
+  // If the user is logged out, keep them on the account/login flow.
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setActiveTab('calculate')
+      setHistoryRows([])
+      setResult(null)
+    }
+  }, [isAuthenticated])
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+
+    if (!isAuthenticated) {
+      setError('Please login before using FLAMES.')
+      return
+    }
 
     setError('')
     setIsLoading(true)
@@ -135,6 +155,7 @@ function App() {
       localStorage.setItem('flames_auth_user', JSON.stringify(payload.user))
       setCurrentUser(payload.user)
       setAuthPassword('')
+      setActiveTab('calculate')
     } catch (requestError) {
       setAuthError(requestError.message || 'Authentication failed.')
     } finally {
@@ -154,6 +175,7 @@ function App() {
       localStorage.removeItem('flames_auth_token')
       localStorage.removeItem('flames_auth_user')
       setCurrentUser(null)
+      setHistoryRows([])
       setAuthLoading(false)
     }
   }
@@ -174,6 +196,7 @@ function App() {
             type="button"
             className={`chip-btn ${activeTab === 'calculate' ? 'active' : ''}`}
             onClick={() => setActiveTab('calculate')}
+            disabled={!isAuthenticated}
           >
             Calculate
           </button>
@@ -181,6 +204,7 @@ function App() {
             type="button"
             className={`chip-btn ${activeTab === 'history' ? 'active' : ''}`}
             onClick={() => setActiveTab('history')}
+            disabled={!isAuthenticated}
           >
             History
           </button>
@@ -251,6 +275,12 @@ function App() {
         </article>
 
         <article className="panel main-panel">
+          {!isAuthenticated ? (
+            <div>
+              <h2>Login required</h2>
+              <p>Please login or register to access FLAMES calculation and your private history.</p>
+            </div>
+          ) : (
           <AnimatePresence mode="wait">
             {activeTab === 'calculate' ? (
               <MotionDiv
@@ -397,6 +427,7 @@ function App() {
               </MotionDiv>
             )}
           </AnimatePresence>
+          )}
         </article>
       </section>
     </main>

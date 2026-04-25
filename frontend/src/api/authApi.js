@@ -1,63 +1,76 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+import { API_BASE_URL, logApi } from './config'
 
 const parseResponse = async (response) => {
-  let payload = null;
+  const rawBody = await response.text()
+  let payload = null
 
-  try {
-    payload = await response.json();
-  } catch {
-    throw new Error('Unable to read API response.');
+  if (rawBody) {
+    try {
+      payload = JSON.parse(rawBody)
+    } catch {
+      payload = null
+    }
   }
+
+  logApi('response', response.status, response.url, payload || rawBody)
 
   if (!response.ok) {
     const message =
       payload?.detail ||
       payload?.error ||
-      (typeof payload === 'object'
+      (typeof payload === 'object' && payload !== null
         ? Object.values(payload).flat().join(' ')
-        : 'Request failed.');
+        : rawBody || `Request failed with status ${response.status}.`)
 
-    throw new Error(message || 'Request failed.');
+    throw new Error(message || 'Request failed.')
   }
 
-  return payload;
-};
+  return payload || {}
+}
 
-// ✅ REGISTER
+const performRequest = async (url, options) => {
+  logApi('request', options.method || 'GET', url, options.body || null)
+
+  try {
+    const response = await fetch(url, options)
+    return await parseResponse(response)
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(
+        `Cannot connect to backend at ${API_BASE_URL}. Confirm Django is running at http://127.0.0.1:8000.`,
+      )
+    }
+
+    throw error
+  }
+}
+
 export const registerApi = async ({ username, email, password }) => {
-  const response = await fetch(`${API_BASE_URL}/api/auth/register/`, {
+  return performRequest(`${API_BASE_URL}/api/auth/register/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, email, password }),
-  });
+  })
+}
 
-  return parseResponse(response);
-};
-
-// ✅ LOGIN
 export const loginApi = async ({ username, password }) => {
-  const response = await fetch(`${API_BASE_URL}/api/auth/login/`, {
+  return performRequest(`${API_BASE_URL}/api/auth/login/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
-  });
+  })
+}
 
-  return parseResponse(response);
-};
-
-// ✅ LOGOUT
 export const logoutApi = async () => {
-  const token = localStorage.getItem('flames_auth_token');
+  const token = localStorage.getItem('flames_auth_token')
 
-  if (!token) return;
+  if (!token) return
 
-  const response = await fetch(`${API_BASE_URL}/api/auth/logout/`, {
+  return performRequest(`${API_BASE_URL}/api/auth/logout/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Token ${token}`,
     },
-  });
-
-  return parseResponse(response);
-};
+  })
+}
